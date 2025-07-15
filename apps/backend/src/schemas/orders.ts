@@ -1,9 +1,9 @@
 import {
-  pgTable,
-  integer,
-  varchar,
-  timestamp,
   foreignKey,
+  integer,
+  pgTable,
+  timestamp,
+  varchar,
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 

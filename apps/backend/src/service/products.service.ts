@@ -1,15 +1,15 @@
 import { eq } from "drizzle-orm";
-import { products } from "../schemas/products";
+import { DrizzleQueryError } from "drizzle-orm/errors";
 import db from "../db";
+import { products } from "../schemas/products";
 import {
-  InternalServerError,
-  NotFoundError,
   AppError,
   AppErrorCodes,
+  InternalServerError,
+  NotFoundError,
 } from "../utils/app-errors";
-import { tryCatch } from "../utils/utils";
 import { getPgErrorMessageByCode } from "../utils/error-handler";
-import { DrizzleQueryError } from "drizzle-orm/errors";
+import { tryCatch } from "../utils/utils";
 
 export class ProductsService {
   async getAllProducts() {

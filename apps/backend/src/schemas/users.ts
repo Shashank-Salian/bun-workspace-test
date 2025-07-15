@@ -1,5 +1,4 @@
-import { pgTable, unique, integer, varchar } from "drizzle-orm/pg-core";
-import { z } from "zod/v4";
+import { integer, pgTable, unique, varchar } from "drizzle-orm/pg-core";
 
 export const usersConstraints = {
   uq_users_email: "uq_users_email",

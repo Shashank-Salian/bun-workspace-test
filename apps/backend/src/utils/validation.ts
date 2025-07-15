@@ -1,8 +1,7 @@
 import type { Context, ValidationTargets } from "hono";
 import type { $ZodError } from "zod/v4/core";
-
-import { ValidationError } from "./app-errors";
 import type { ErrorDetails } from "../core/response.schema";
+import { ValidationError } from "./app-errors";
 
 export interface ValidationErrorDetail {
   path: string;

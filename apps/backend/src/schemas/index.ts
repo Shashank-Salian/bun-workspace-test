@@ -1,11 +1,11 @@
 // Export all tables
-export { users } from "./users";
-export { products } from "./products";
-export { carts } from "./carts";
-export { cartItems } from "./cart-items";
-export { orders } from "./orders";
-export { orderItems } from "./order-items";
-export { categories } from "./categories";
 
+export { cartItems } from "./cart-items";
+export { carts } from "./carts";
+export { categories } from "./categories";
+export { orderItems } from "./order-items";
+export { orders } from "./orders";
+export { products } from "./products";
 // Export all relations
 export * from "./relations";
+export { users } from "./users";

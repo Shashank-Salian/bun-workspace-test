@@ -1,14 +1,14 @@
-import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { OrderItemsService } from "../service/order-items.service";
-import { orderItems } from "../schemas/order-items";
-import { createValidationHook } from "../utils/validation";
 import z from "zod/v4";
 import {
   createOrderItemsSchema,
+  orderItems,
   updateOrderItemsSchema,
 } from "../schemas/order-items";
+import { OrderItemsService } from "../service/order-items.service";
+import { createValidationHook } from "../utils/validation";
 
 const orderItemsRoute = new Hono();
 const orderItemsService = new OrderItemsService();

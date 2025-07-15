@@ -1,7 +1,7 @@
-import { pgTable, integer, foreignKey } from "drizzle-orm/pg-core";
+import { foreignKey, integer, pgTable } from "drizzle-orm/pg-core";
+import { z } from "zod/v4";
 import { orders } from "./orders";
 import { products } from "./products";
-import { z } from "zod/v4";
 
 export const orderItems = pgTable(
   "order_items",

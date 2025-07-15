@@ -1,8 +1,8 @@
 import "./index.css";
-import { APITester } from "./APITester";
-import { Card, CardContent } from "@/components/ui/card";
 import { usersSchema } from "@zod-schemas";
 import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { APITester } from "./APITester";
 
 import logo from "./logo.svg";
 import reactLogo from "./react.svg";

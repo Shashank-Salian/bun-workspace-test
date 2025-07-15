@@ -1,4 +1,4 @@
-import { pgTable, unique, integer, foreignKey } from "drizzle-orm/pg-core";
+import { foreignKey, integer, pgTable, unique } from "drizzle-orm/pg-core";
 import { carts } from "./carts";
 import { products } from "./products";
 

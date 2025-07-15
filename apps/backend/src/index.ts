@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { handle } from "hono/aws-lambda";
 import { serve } from "@hono/node-server";
+import { handle } from "hono/aws-lambda";
 
 import app from "./app";
 // import "./routes/docs/users-openapi";

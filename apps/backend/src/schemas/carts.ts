@@ -1,9 +1,9 @@
 import {
-  pgTable,
-  unique,
-  integer,
   boolean,
   foreignKey,
+  integer,
+  pgTable,
+  unique,
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 

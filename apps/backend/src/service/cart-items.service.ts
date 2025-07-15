@@ -1,14 +1,14 @@
 import { eq } from "drizzle-orm";
-import { cartItems } from "../schemas/cart-items";
 import db from "../db";
+import { cartItems } from "../schemas/cart-items";
 import {
+  BadRequestError,
   ConflictError,
   InternalServerError,
   NotFoundError,
-  BadRequestError,
 } from "../utils/app-errors";
-import { tryCatch } from "../utils/utils";
 import { isConstraintError } from "../utils/error-handler";
+import { tryCatch } from "../utils/utils";
 
 export class CartItemsService {
   async getAllCartItems() {

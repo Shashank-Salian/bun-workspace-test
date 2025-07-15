@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql, type SQL } from "drizzle-orm";
 import db from "../db";
 import { users } from "../schemas";
 import { BaseRepository } from "../core/base.repository";
@@ -9,8 +9,26 @@ export class UsersRepository extends BaseRepository<typeof users.$inferSelect> {
    * Get all users
    * @returns All users
    */
-  async getAll(limit = 10, offset = 0) {
-    return db.select().from(users).limit(limit).offset(offset);
+  async getAll(limit = 10, offset = 0, where?: SQL<unknown>) {
+    return await db
+      .select()
+      .from(users)
+      .limit(limit)
+      .offset(offset)
+      .where(where);
+  }
+
+  /**
+   * Get count of all users
+   * @param where - Optional where condition
+   * @returns Count of users
+   */
+  async count(where?: SQL<unknown>) {
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(users)
+      .where(where);
+    return result[0]?.count ?? 0;
   }
 
   /**

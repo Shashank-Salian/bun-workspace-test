@@ -1,6 +1,6 @@
-import type { categories } from "../schemas/categories";
-import { CategoriesRepository } from "../repository/categories.repository";
 import { BaseService } from "../core/base.service";
+import { CategoriesRepository } from "../repository/categories.repository";
+import type { categories } from "../schemas/categories";
 
 const categoriesRepository = new CategoriesRepository();
 

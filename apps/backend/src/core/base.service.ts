@@ -1,4 +1,10 @@
+import type { SQL } from "drizzle-orm";
 import type { BaseModel, BaseRepository } from "./base.repository";
+import {
+  type PaginationParams,
+  type PaginatedData,
+  paginate,
+} from "./pagination";
 
 export class BaseService<
   TRow extends BaseModel,
@@ -28,5 +34,15 @@ export class BaseService<
 
   async delete(id: number) {
     return this.repository.delete(id);
+  }
+
+  /**
+   * Get paginated results
+   */
+  async getAllPaginated(
+    params: PaginationParams,
+    whereCondition?: SQL<unknown>,
+  ): Promise<PaginatedData<TRow>> {
+    return paginate(this.repository, params, whereCondition);
   }
 }

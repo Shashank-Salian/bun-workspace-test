@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
+import { BaseRepository } from "../core/base.repository";
 import db from "../db";
 import { categories } from "../schemas";
-import { BaseRepository } from "../core/base.repository";
 import { InternalServerError } from "../utils/app-errors";
 
 export class CategoriesRepository extends BaseRepository<

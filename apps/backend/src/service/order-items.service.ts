@@ -1,14 +1,14 @@
 import { eq } from "drizzle-orm";
-import { orderItems } from "../schemas/order-items";
 import db from "../db";
+import { orderItems } from "../schemas/order-items";
 import {
+  BadRequestError,
   ConflictError,
   InternalServerError,
   NotFoundError,
-  BadRequestError,
 } from "../utils/app-errors";
-import { tryCatch } from "../utils/utils";
 import { isConstraintError } from "../utils/error-handler";
+import { tryCatch } from "../utils/utils";
 
 export class OrderItemsService {
   async getAllOrderItems() {

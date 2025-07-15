@@ -1,3 +1,5 @@
+import type { BaseModel, BaseRepository } from "./base.repository";
+
 export interface ErrorDetails {
   [key: string]: unknown;
 }

@@ -1,11 +1,11 @@
 import { relations } from "drizzle-orm/relations";
-import { users } from "./users";
-import { carts } from "./carts";
 import { cartItems } from "./cart-items";
-import { products } from "./products";
-import { orders } from "./orders";
-import { orderItems } from "./order-items";
+import { carts } from "./carts";
 import { categories } from "./categories";
+import { orderItems } from "./order-items";
+import { orders } from "./orders";
+import { products } from "./products";
+import { users } from "./users";
 
 export const usersRelations = relations(users, ({ many }) => ({
   carts: many(carts),

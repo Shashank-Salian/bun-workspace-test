@@ -1,12 +1,12 @@
 import {
-  pgTable,
-  integer,
-  varchar,
-  text,
   foreignKey,
+  integer,
+  pgTable,
+  text,
+  varchar,
 } from "drizzle-orm/pg-core";
-import { categories } from "./categories";
 import { z } from "zod/v4";
+import { categories } from "./categories";
 
 export const products = pgTable(
   "products",

@@ -1,9 +1,8 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { HTTPException } from "hono/http-exception";
 import { UsersService } from "../service/users.service";
-import { users } from "../schemas/users";
 import { createValidationHook } from "../utils/validation";
+import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
 import z from "zod/v4";
 import { createUserSchema, updateUserSchema } from "@zod-schemas";
 
@@ -11,13 +10,25 @@ const usersRoute = new Hono();
 const usersService = new UsersService();
 
 // GET /users - Get all users
-usersRoute.get("/", async (c) => {
-  const allUsers = await usersService.getAll();
-  return c.json({
-    message: "Successfully fetched all users",
-    data: allUsers,
-  });
-});
+usersRoute.get(
+  "/",
+  zValidator(
+    "query",
+    paginationParamsSchema,
+    createValidationHook("Invalid pagination parameters"),
+  ),
+  async (c) => {
+    const { page, pageSize } = c.req.valid("query");
+    const allUsers = await usersService.getAllPaginated({
+      page,
+      pageSize,
+    });
+
+    return c.json(
+      new PaginatedResponse(true, "Users fetched successfully", 200, allUsers),
+    );
+  },
+);
 
 // GET /users/:id - Get User by ID
 usersRoute.get(

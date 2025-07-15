@@ -1,11 +1,11 @@
-import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { HTTPException } from "hono/http-exception";
-import { CategoriesService } from "../service/categories.service";
-import { categories } from "../schemas/categories";
-import { createValidationHook } from "../utils/validation";
-import z from "zod/v4";
 import { createCategorySchema, updateCategorySchema } from "@zod-schemas";
+import { Hono } from "hono";
+import { HTTPException } from "hono/http-exception";
+import z from "zod/v4";
+import { categories } from "../schemas/categories";
+import { CategoriesService } from "../service/categories.service";
+import { createValidationHook } from "../utils/validation";
 
 const categoriesRoute = new Hono();
 const categoriesService = new CategoriesService();
