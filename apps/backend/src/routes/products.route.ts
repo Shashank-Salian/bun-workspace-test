@@ -1,7 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
-import { createProductSchema, updateProductSchema } from "@zod-schemas";
+import {
+  createProductSchema,
+  updateProductSchema,
+  idParamSchema,
+} from "@zod-schemas";
 import { Hono } from "hono";
-import z from "zod/v4";
 import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
 import { ProductsService } from "../service/products.service";
 import { createValidationHook } from "../utils/validation";
@@ -40,7 +43,7 @@ productsRoute.get(
   "/:id",
   zValidator(
     "param",
-    z.object({ id: z.coerce.number().int("Invalid products ID") }),
+    idParamSchema,
     createValidationHook("Invalid products ID"),
   ),
   async (c) => {
@@ -80,7 +83,7 @@ productsRoute.put(
   "/:id",
   zValidator(
     "param",
-    z.object({ id: z.coerce.number().int("Invalid products ID") }),
+    idParamSchema,
     createValidationHook("Invalid products ID"),
   ),
   zValidator(
@@ -105,7 +108,7 @@ productsRoute.delete(
   "/:id",
   zValidator(
     "param",
-    z.object({ id: z.coerce.number().int("Invalid products ID") }),
+    idParamSchema,
     createValidationHook("Invalid products ID"),
   ),
   async (c) => {

@@ -1,9 +1,9 @@
-import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import z from "zod/v4";
-import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
+import { zValidator } from "@hono/zod-validator";
 import { OrderItemsService } from "../service/order-items.service";
 import { createValidationHook } from "../utils/validation";
+import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
+import { idParamSchema } from "@zod-schemas";
 
 const orderItemsRoute = new Hono();
 const orderItemsService = new OrderItemsService();
@@ -39,7 +39,7 @@ orderItemsRoute.get(
   "/:id",
   zValidator(
     "param",
-    z.object({ id: z.coerce.number().int("Invalid order items ID") }),
+    idParamSchema,
     createValidationHook("Invalid order items ID"),
   ),
   async (c) => {
@@ -81,7 +81,7 @@ orderItemsRoute.put(
   "/:id",
   zValidator(
     "param",
-    z.object({ id: z.coerce.number().int("Invalid order items ID") }),
+    idParamSchema,
     createValidationHook("Invalid order items ID"),
   ),
   // TODO: Add zod validation - updateOrderItemsSchema not found in schema file
@@ -108,7 +108,7 @@ orderItemsRoute.delete(
   "/:id",
   zValidator(
     "param",
-    z.object({ id: z.coerce.number().int("Invalid order items ID") }),
+    idParamSchema,
     createValidationHook("Invalid order items ID"),
   ),
   async (c) => {

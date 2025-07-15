@@ -1,9 +1,6 @@
 import type { DescribeRouteOptions } from "hono-openapi";
 
-import { resolver } from "hono-openapi/zod";
-import usersRoute from "../users.route";
-
-const getRootDoc: DescribeRouteOptions = {
+const _getRootDoc: DescribeRouteOptions = {
   description: "Get all users",
   responses: {
     "200": {
@@ -42,7 +39,7 @@ const getRootDoc: DescribeRouteOptions = {
   },
 };
 
-const createUserDoc: DescribeRouteOptions = {
+const _createUserDoc: DescribeRouteOptions = {
   description: "Create a new user",
   requestBody: {
     description: "User data to create a new user",

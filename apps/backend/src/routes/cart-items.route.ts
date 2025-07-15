@@ -1,6 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import z from "zod/v4";
+import { idParamSchema } from "@zod-schemas";
 import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
 import { CartItemsService } from "../service/cart-items.service";
 import { createValidationHook } from "../utils/validation";
@@ -39,7 +39,7 @@ cartItemsRoute.get(
   "/:id",
   zValidator(
     "param",
-    z.object({ id: z.coerce.number().int("Invalid cart items ID") }),
+    idParamSchema,
     createValidationHook("Invalid cart items ID"),
   ),
   async (c) => {
@@ -81,7 +81,7 @@ cartItemsRoute.put(
   "/:id",
   zValidator(
     "param",
-    z.object({ id: z.coerce.number().int("Invalid cart items ID") }),
+    idParamSchema,
     createValidationHook("Invalid cart items ID"),
   ),
   // TODO: Add zod validation - updateCartItemsSchema not found in schema file
@@ -108,7 +108,7 @@ cartItemsRoute.delete(
   "/:id",
   zValidator(
     "param",
-    z.object({ id: z.coerce.number().int("Invalid cart items ID") }),
+    idParamSchema,
     createValidationHook("Invalid cart items ID"),
   ),
   async (c) => {

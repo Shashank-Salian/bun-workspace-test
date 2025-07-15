@@ -1,7 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
-import { createUserSchema, updateUserSchema } from "@zod-schemas";
+import {
+  createUserSchema,
+  idParamSchema,
+  updateUserSchema,
+} from "@zod-schemas";
 import { Hono } from "hono";
-import z from "zod/v4";
 import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
 import { UsersService } from "../service/users.service";
 import { createValidationHook } from "../utils/validation";
@@ -33,11 +36,7 @@ usersRoute.get(
 // GET /users/:id - Get User by ID
 usersRoute.get(
   "/:id",
-  zValidator(
-    "param",
-    z.object({ id: z.coerce.number().int("Invalid users ID") }),
-    createValidationHook("Invalid users ID"),
-  ),
+  zValidator("param", idParamSchema, createValidationHook("Invalid users ID")),
   async (c) => {
     const { id } = c.req.valid("param");
     const user = await usersService.getById(id);
@@ -73,11 +72,7 @@ usersRoute.post(
 // PUT /users/:id - Update users
 usersRoute.put(
   "/:id",
-  zValidator(
-    "param",
-    z.object({ id: z.coerce.number().int("Invalid users ID") }),
-    createValidationHook("Invalid users ID"),
-  ),
+  zValidator("param", idParamSchema, createValidationHook("Invalid users ID")),
   zValidator(
     "json",
     updateUserSchema,
@@ -98,11 +93,7 @@ usersRoute.put(
 // DELETE /users/:id - Delete users
 usersRoute.delete(
   "/:id",
-  zValidator(
-    "param",
-    z.object({ id: z.coerce.number().int("Invalid users ID") }),
-    createValidationHook("Invalid users ID"),
-  ),
+  zValidator("param", idParamSchema, createValidationHook("Invalid users ID")),
   async (c) => {
     const { id } = c.req.valid("param");
     const deletedUser = await usersService.delete(id);

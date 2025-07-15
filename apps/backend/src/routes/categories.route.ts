@@ -1,7 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
-import { createCategorySchema, updateCategorySchema } from "@zod-schemas";
+import {
+  createCategorySchema,
+  updateCategorySchema,
+  idParamSchema,
+} from "@zod-schemas";
 import { Hono } from "hono";
-import z from "zod/v4";
 import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
 import { CategoriesService } from "../service/categories.service";
 import { createValidationHook } from "../utils/validation";
@@ -40,7 +43,7 @@ categoriesRoute.get(
   "/:id",
   zValidator(
     "param",
-    z.object({ id: z.coerce.number().int("Invalid categories ID") }),
+    idParamSchema,
     createValidationHook("Invalid categories ID"),
   ),
   async (c) => {
@@ -80,7 +83,7 @@ categoriesRoute.put(
   "/:id",
   zValidator(
     "param",
-    z.object({ id: z.coerce.number().int("Invalid categories ID") }),
+    idParamSchema,
     createValidationHook("Invalid categories ID"),
   ),
   zValidator(
@@ -105,7 +108,7 @@ categoriesRoute.delete(
   "/:id",
   zValidator(
     "param",
-    z.object({ id: z.coerce.number().int("Invalid categories ID") }),
+    idParamSchema,
     createValidationHook("Invalid categories ID"),
   ),
   async (c) => {
