@@ -1,0 +1,20 @@
+{
+  "name": "bun-workspace-test",
+  "module": "index.ts",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "dev": "bun run --parallel dev:*",
+    "dev:frontend": "bun --hot run dev --filter frontend",
+    "dev:backend": "bun --hot run dev --filter backend",
+    "generate-routes": "bun run generators/generate.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

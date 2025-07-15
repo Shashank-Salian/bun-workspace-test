@@ -1,0 +1,43 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend API with Hono framework",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "esbuild --bundle --outfile=./dist/index.js --platform=node --target=node20 ./src/index.ts",
+    "dev": "esbuild --bundle --outfile=./dist/index.js --platform=node --target=node20 ./src/index.ts --watch",
+    "start-local": "cp .env dist && sam local start-api --warm-containers EAGER",
+    "zip": "zip -j lambda.zip dist/index.js",
+    "update": "aws lambda update-function-code --zip-file fileb://lambda.zip --function-name hello",
+    "deploy": "run-s build zip update",
+    "generate-migration": "drizzle-kit generate --config=./drizzle.config.ts",
+    "migrate": "drizzle-kit migrate --config=./drizzle.config.ts",
+    "generate-routes": "bun run generators/generate.ts",
+    "node-dev": "tsx watch src/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "@types/pg": "^8.15.4",
+    "@types/pluralize": "^0.0.33",
+    "drizzle-kit": "^0.31.4",
+    "esbuild": "0.25.5",
+    "npm-run-all2": "^6.2.0",
+    "pluralize": "^8.0.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.1",
+    "@hono/swagger-ui": "^0.5.2",
+    "@hono/zod-openapi": "^0.19.9",
+    "@hono/zod-validator": "^0.7.0",
+    "dotenv": "^17.1.0",
+    "drizzle-orm": "^0.44.2",
+    "hono": "^4.8.4",
+    "hono-openapi": "^0.4.8",
+    "pg": "^8.16.3",
+    "zod": "^3.25.75",
+    "@zod-schemas": "workspace:*"
+  }
+}
