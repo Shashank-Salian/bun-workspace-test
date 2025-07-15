@@ -1,7 +1,7 @@
-import { eq, sql, type SQL } from "drizzle-orm";
+import { eq, type SQL, sql } from "drizzle-orm";
+import { BaseRepository } from "../core/base.repository";
 import db from "../db";
 import { users } from "../schemas";
-import { BaseRepository } from "../core/base.repository";
 import { InternalServerError } from "../utils/app-errors";
 
 export class UsersRepository extends BaseRepository<typeof users.$inferSelect> {

@@ -43,7 +43,7 @@ export function createValidationHook(customMessage?: string) {
       }));
 
       const errorResponse = new ValidationError(
-        "Invalid details",
+        customMessage ?? "Invalid details",
         null,
         details,
       );

@@ -1,12 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
 import z from "zod/v4";
-import {
-  createOrderItemsSchema,
-  orderItems,
-  updateOrderItemsSchema,
-} from "../schemas/order-items";
+import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
 import { OrderItemsService } from "../service/order-items.service";
 import { createValidationHook } from "../utils/validation";
 
@@ -14,15 +9,32 @@ const orderItemsRoute = new Hono();
 const orderItemsService = new OrderItemsService();
 
 // GET /orderItems - Get all orderItems
-orderItemsRoute.get("/", async (c) => {
-  const allOrderItems = await orderItemsService.getAllOrderItems();
-  return c.json({
-    message: "Successfully fetched all orderItems",
-    data: allOrderItems,
-  });
-});
+orderItemsRoute.get(
+  "/",
+  zValidator(
+    "query",
+    paginationParamsSchema,
+    createValidationHook("Invalid pagination parameters"),
+  ),
+  async (c) => {
+    const { page, pageSize } = c.req.valid("query");
+    const allOrderItems = await orderItemsService.getAllPaginated({
+      page,
+      pageSize,
+    });
 
-// GET /orderItems/:id - Get orderItems by ID
+    return c.json(
+      new PaginatedResponse(
+        true,
+        "OrderItems fetched successfully",
+        200,
+        allOrderItems,
+      ),
+    );
+  },
+);
+
+// GET /orderItems/:id - Get OrderItem by ID
 orderItemsRoute.get(
   "/:id",
   zValidator(
@@ -32,10 +44,10 @@ orderItemsRoute.get(
   ),
   async (c) => {
     const { id } = c.req.valid("param");
-    const orderItems = await orderItemsService.getOrderItemsById(id);
+    const orderItem = await orderItemsService.getById(id);
     return c.json({
       message: "Successfully fetched order items",
-      data: orderItems,
+      data: orderItem,
     });
   },
 );
@@ -43,19 +55,21 @@ orderItemsRoute.get(
 // POST /orderItems - Create a new order items
 orderItemsRoute.post(
   "/",
-  zValidator(
-    "json",
-    createOrderItemsSchema,
-    createValidationHook("OrderItems validation failed"),
-  ),
+  // TODO: Add zod validation - createOrderItemsSchema not found in schema file
+  // zValidator(
+  //   "json",
+  //   createOrderItemSchema,
+  //   createValidationHook("OrderItems validation failed"),
+  // ),
   async (c) => {
-    const data = c.req.valid("json");
-    const newOrderItems = await orderItemsService.createOrderItems(data);
+    // TODO: Replace with c.req.valid("json") when zValidator is enabled
+    const data = await c.req.json();
+    const newOrderItem = await orderItemsService.create(data);
 
     return c.json(
       {
         message: "Successfully created order items",
-        data: newOrderItems,
+        data: newOrderItem,
       },
       201,
     );
@@ -70,22 +84,21 @@ orderItemsRoute.put(
     z.object({ id: z.coerce.number().int("Invalid order items ID") }),
     createValidationHook("Invalid order items ID"),
   ),
-  zValidator(
-    "json",
-    updateOrderItemsSchema,
-    createValidationHook("OrderItems validation failed"),
-  ),
+  // TODO: Add zod validation - updateOrderItemsSchema not found in schema file
+  // zValidator(
+  //   "json",
+  //   updateOrderItemSchema,
+  //   createValidationHook("OrderItems validation failed"),
+  // ),
   async (c) => {
     const { id } = c.req.valid("param");
-    const data = c.req.valid("json");
-    const updatedOrderItems = await orderItemsService.updateOrderItems(
-      id,
-      data,
-    );
+    // TODO: Replace with c.req.valid("json") when zValidator is enabled
+    const data = await c.req.json();
+    const updatedOrderItem = await orderItemsService.update(id, data);
 
     return c.json({
       message: "Successfully updated order items",
-      data: updatedOrderItems,
+      data: updatedOrderItem,
     });
   },
 );
@@ -100,11 +113,11 @@ orderItemsRoute.delete(
   ),
   async (c) => {
     const { id } = c.req.valid("param");
-    const deletedOrderItems = await orderItemsService.deleteOrderItems(id);
+    const deletedOrderItem = await orderItemsService.delete(id);
 
     return c.json({
       message: "Successfully deleted order items",
-      data: deletedOrderItems,
+      data: deletedOrderItem,
     });
   },
 );

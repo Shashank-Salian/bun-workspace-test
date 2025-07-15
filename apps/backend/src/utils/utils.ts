@@ -1,5 +1,3 @@
-import { DrizzleQueryError } from "drizzle-orm/errors";
-
 // Types for the result object with discriminated union
 type Success<T> = {
   data: T;

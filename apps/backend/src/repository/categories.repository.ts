@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, type SQL, sql } from "drizzle-orm";
 import { BaseRepository } from "../core/base.repository";
 import db from "../db";
 import { categories } from "../schemas";
@@ -11,8 +11,26 @@ export class CategoriesRepository extends BaseRepository<
    * Get all categories
    * @returns All categories
    */
-  async getAll(limit = 10, offset = 0) {
-    return db.select().from(categories).limit(limit).offset(offset);
+  async getAll(limit = 10, offset = 0, where?: SQL<unknown>) {
+    return await db
+      .select()
+      .from(categories)
+      .limit(limit)
+      .offset(offset)
+      .where(where);
+  }
+
+  /**
+   * Get count of all categories
+   * @param where - Optional where condition
+   * @returns Count of categories
+   */
+  async count(where?: SQL<unknown>) {
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(categories)
+      .where(where);
+    return result[0]?.count ?? 0;
   }
 
   /**

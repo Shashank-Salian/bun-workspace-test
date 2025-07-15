@@ -1,81 +1,14 @@
-import { eq } from "drizzle-orm";
-import db from "../db";
-import { orderItems } from "../schemas/order-items";
-import {
-  BadRequestError,
-  ConflictError,
-  InternalServerError,
-  NotFoundError,
-} from "../utils/app-errors";
-import { isConstraintError } from "../utils/error-handler";
-import { tryCatch } from "../utils/utils";
+import { BaseService } from "../core/base.service";
+import { OrderItemsRepository } from "../repository/order-items.repository";
+import type { orderItems } from "../schemas/order-items";
 
-export class OrderItemsService {
-  async getAllOrderItems() {
-    const { data, error } = await tryCatch(db.select().from(orderItems));
+const orderItemsRepository = new OrderItemsRepository();
 
-    if (data) return data;
-    throw new InternalServerError("Failed to fetch order items", error);
-  }
-
-  async getOrderItemsById(id: number) {
-    const { data, error } = await tryCatch(
-      db.select().from(orderItems).where(eq(orderItems.id, id)),
-    );
-
-    if (data) {
-      if (data.length === 0) {
-        throw new NotFoundError("order items not found");
-      }
-      return data[0];
-    }
-    throw new InternalServerError("Failed to fetch order items", error);
-  }
-
-  async createOrderItems(orderItemsData: typeof orderItems.$inferInsert) {
-    const { data, error } = await tryCatch(
-      db.insert(orderItems).values(orderItemsData).returning(),
-    );
-
-    if (data) return data[0];
-
-    throw new InternalServerError("Failed to create order items", error);
-  }
-
-  async updateOrderItems(
-    id: number,
-    orderItemsData: Partial<typeof orderItems.$inferInsert>,
-  ) {
-    const { data, error } = await tryCatch(
-      db
-        .update(orderItems)
-        .set(orderItemsData)
-        .where(eq(orderItems.id, id))
-        .returning(),
-    );
-
-    if (data) {
-      if (data.length === 0) {
-        throw new NotFoundError("order items not found");
-      }
-      return data[0];
-    }
-
-    throw new InternalServerError("Failed to update order items", error);
-  }
-
-  async deleteOrderItems(id: number) {
-    const { data, error } = await tryCatch(
-      db.delete(orderItems).where(eq(orderItems.id, id)).returning(),
-    );
-
-    if (data) {
-      if (data.length === 0) {
-        throw new NotFoundError("order items not found");
-      }
-      return data[0];
-    }
-
-    throw new InternalServerError("Failed to delete order items", error);
+export class OrderItemsService extends BaseService<
+  typeof orderItems.$inferSelect,
+  OrderItemsRepository
+> {
+  constructor() {
+    super(orderItemsRepository);
   }
 }

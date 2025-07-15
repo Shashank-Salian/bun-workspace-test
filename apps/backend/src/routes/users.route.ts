@@ -1,10 +1,10 @@
-import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
+import { createUserSchema, updateUserSchema } from "@zod-schemas";
+import { Hono } from "hono";
+import z from "zod/v4";
+import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
 import { UsersService } from "../service/users.service";
 import { createValidationHook } from "../utils/validation";
-import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
-import z from "zod/v4";
-import { createUserSchema, updateUserSchema } from "@zod-schemas";
 
 const usersRoute = new Hono();
 const usersService = new UsersService();

@@ -1,6 +1,4 @@
 import "./index.css";
-import { usersSchema } from "@zod-schemas";
-import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { APITester } from "./APITester";
 

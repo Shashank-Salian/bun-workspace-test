@@ -1,9 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
 import { createCategorySchema, updateCategorySchema } from "@zod-schemas";
 import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
 import z from "zod/v4";
-import { categories } from "../schemas/categories";
+import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
 import { CategoriesService } from "../service/categories.service";
 import { createValidationHook } from "../utils/validation";
 
@@ -11,13 +10,30 @@ const categoriesRoute = new Hono();
 const categoriesService = new CategoriesService();
 
 // GET /categories - Get all categories
-categoriesRoute.get("/", async (c) => {
-  const allCategories = await categoriesService.getAll();
-  return c.json({
-    message: "Successfully fetched all categories",
-    data: allCategories,
-  });
-});
+categoriesRoute.get(
+  "/",
+  zValidator(
+    "query",
+    paginationParamsSchema,
+    createValidationHook("Invalid pagination parameters"),
+  ),
+  async (c) => {
+    const { page, pageSize } = c.req.valid("query");
+    const allCategories = await categoriesService.getAllPaginated({
+      page,
+      pageSize,
+    });
+
+    return c.json(
+      new PaginatedResponse(
+        true,
+        "Categories fetched successfully",
+        200,
+        allCategories,
+      ),
+    );
+  },
+);
 
 // GET /categories/:id - Get Category by ID
 categoriesRoute.get(

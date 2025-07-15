@@ -1,5 +1,3 @@
-import { serve } from "@hono/node-server";
-import { usersSchema } from "@zod-schemas";
 import { DrizzleQueryError } from "drizzle-orm/errors";
 import { Hono } from "hono";
 import cartItemsRoute from "./routes/cart-items.route";
@@ -7,9 +5,8 @@ import categoriesRoute from "./routes/categories.route";
 import orderItemsRoute from "./routes/order-items.route";
 import productsRoute from "./routes/products.route";
 import usersRoute from "./routes/users.route";
-import { Prettify } from "./types/types";
-import { AppError, DatabaseError } from "./utils/app-errors";
-import { getPgErrorMessageByCode } from "./utils/error-handler";
+import { AppError } from "./utils/app-errors";
+import { getDatabaseError } from "./utils/error-handler";
 
 // import { openAPISpecs } from "@hono/zod-openapi";
 // import { swaggerUI } from "@hono/swagger-ui";
@@ -53,8 +50,7 @@ app.onError((err, c) => {
   );
 
   if (err instanceof DrizzleQueryError) {
-    const message = getPgErrorMessageByCode(err) ?? "Something went wrong!";
-    return new DatabaseError(message, err).getJsonResponse(c);
+    return getDatabaseError(err).getJsonResponse(c);
   }
 
   if (err instanceof AppError) {
@@ -65,8 +61,6 @@ app.onError((err, c) => {
 
   return new AppError().getJsonResponse(c);
 });
-
-// serve(app);
 
 export type AppType = typeof app;
 export default app;

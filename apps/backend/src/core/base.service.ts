@@ -1,8 +1,8 @@
 import type { SQL } from "drizzle-orm";
 import type { BaseModel, BaseRepository } from "./base.repository";
 import {
-  type PaginationParams,
   type PaginatedData,
+  type PaginationParams,
   paginate,
 } from "./pagination";
 

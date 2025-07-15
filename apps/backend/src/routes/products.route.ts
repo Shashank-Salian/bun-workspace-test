@@ -1,12 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
+import { createProductSchema, updateProductSchema } from "@zod-schemas";
 import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
 import z from "zod/v4";
-import {
-  createProductSchema,
-  products,
-  updateProductSchema,
-} from "../schemas/products";
+import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
 import { ProductsService } from "../service/products.service";
 import { createValidationHook } from "../utils/validation";
 
@@ -14,15 +10,32 @@ const productsRoute = new Hono();
 const productsService = new ProductsService();
 
 // GET /products - Get all products
-productsRoute.get("/", async (c) => {
-  const allProducts = await productsService.getAllProducts();
-  return c.json({
-    message: "Successfully fetched all products",
-    data: allProducts,
-  });
-});
+productsRoute.get(
+  "/",
+  zValidator(
+    "query",
+    paginationParamsSchema,
+    createValidationHook("Invalid pagination parameters"),
+  ),
+  async (c) => {
+    const { page, pageSize } = c.req.valid("query");
+    const allProducts = await productsService.getAllPaginated({
+      page,
+      pageSize,
+    });
 
-// GET /products/:id - Get products by ID
+    return c.json(
+      new PaginatedResponse(
+        true,
+        "Products fetched successfully",
+        200,
+        allProducts,
+      ),
+    );
+  },
+);
+
+// GET /products/:id - Get Product by ID
 productsRoute.get(
   "/:id",
   zValidator(
@@ -32,10 +45,10 @@ productsRoute.get(
   ),
   async (c) => {
     const { id } = c.req.valid("param");
-    const products = await productsService.getProductsById(id);
+    const product = await productsService.getById(id);
     return c.json({
       message: "Successfully fetched products",
-      data: products,
+      data: product,
     });
   },
 );
@@ -50,12 +63,12 @@ productsRoute.post(
   ),
   async (c) => {
     const data = c.req.valid("json");
-    const newProducts = await productsService.createProducts(data);
+    const newProduct = await productsService.create(data);
 
     return c.json(
       {
         message: "Successfully created products",
-        data: newProducts,
+        data: newProduct,
       },
       201,
     );
@@ -78,11 +91,11 @@ productsRoute.put(
   async (c) => {
     const { id } = c.req.valid("param");
     const data = c.req.valid("json");
-    const updatedProducts = await productsService.updateProducts(id, data);
+    const updatedProduct = await productsService.update(id, data);
 
     return c.json({
       message: "Successfully updated products",
-      data: updatedProducts,
+      data: updatedProduct,
     });
   },
 );
@@ -97,11 +110,11 @@ productsRoute.delete(
   ),
   async (c) => {
     const { id } = c.req.valid("param");
-    const deletedProducts = await productsService.deleteProducts(id);
+    const deletedProduct = await productsService.delete(id);
 
     return c.json({
       message: "Successfully deleted products",
-      data: deletedProducts,
+      data: deletedProduct,
     });
   },
 );

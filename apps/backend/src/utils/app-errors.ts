@@ -1,5 +1,4 @@
 import type { Context } from "hono";
-import { HTTPException } from "hono/http-exception";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import {
   type ErrorDetails,
@@ -53,12 +52,14 @@ export class DatabaseError extends AppError {
   constructor(
     message: string,
     errorObject?: Error | null,
+    code?: AppErrorCodes,
+    statusCode?: ContentfulStatusCode,
     details?: ErrorDetails[],
   ) {
     super(
       message,
-      500,
-      AppErrorCodes.INTERNAL_SERVER_ERROR,
+      statusCode || 500,
+      code || AppErrorCodes.INTERNAL_SERVER_ERROR,
       errorObject,
       details,
     );

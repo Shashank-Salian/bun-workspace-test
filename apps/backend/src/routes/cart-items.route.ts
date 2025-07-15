@@ -1,8 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
 import z from "zod/v4";
-import { cartItems } from "../schemas/cart-items";
+import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
 import { CartItemsService } from "../service/cart-items.service";
 import { createValidationHook } from "../utils/validation";
 
@@ -10,15 +9,32 @@ const cartItemsRoute = new Hono();
 const cartItemsService = new CartItemsService();
 
 // GET /cartItems - Get all cartItems
-cartItemsRoute.get("/", async (c) => {
-  const allCartItems = await cartItemsService.getAllCartItems();
-  return c.json({
-    message: "Successfully fetched all cartItems",
-    data: allCartItems,
-  });
-});
+cartItemsRoute.get(
+  "/",
+  zValidator(
+    "query",
+    paginationParamsSchema,
+    createValidationHook("Invalid pagination parameters"),
+  ),
+  async (c) => {
+    const { page, pageSize } = c.req.valid("query");
+    const allCartItems = await cartItemsService.getAllPaginated({
+      page,
+      pageSize,
+    });
 
-// GET /cartItems/:id - Get cartItems by ID
+    return c.json(
+      new PaginatedResponse(
+        true,
+        "CartItems fetched successfully",
+        200,
+        allCartItems,
+      ),
+    );
+  },
+);
+
+// GET /cartItems/:id - Get CartItem by ID
 cartItemsRoute.get(
   "/:id",
   zValidator(
@@ -28,10 +44,10 @@ cartItemsRoute.get(
   ),
   async (c) => {
     const { id } = c.req.valid("param");
-    const cartItems = await cartItemsService.getCartItemsById(id);
+    const cartItem = await cartItemsService.getById(id);
     return c.json({
       message: "Successfully fetched cart items",
-      data: cartItems,
+      data: cartItem,
     });
   },
 );
@@ -42,18 +58,18 @@ cartItemsRoute.post(
   // TODO: Add zod validation - createCartItemsSchema not found in schema file
   // zValidator(
   //   "json",
-  //   createCartItemsSchema,
+  //   createCartItemSchema,
   //   createValidationHook("CartItems validation failed"),
   // ),
   async (c) => {
     // TODO: Replace with c.req.valid("json") when zValidator is enabled
     const data = await c.req.json();
-    const newCartItems = await cartItemsService.createCartItems(data);
+    const newCartItem = await cartItemsService.create(data);
 
     return c.json(
       {
         message: "Successfully created cart items",
-        data: newCartItems,
+        data: newCartItem,
       },
       201,
     );
@@ -71,18 +87,18 @@ cartItemsRoute.put(
   // TODO: Add zod validation - updateCartItemsSchema not found in schema file
   // zValidator(
   //   "json",
-  //   updateCartItemsSchema,
+  //   updateCartItemSchema,
   //   createValidationHook("CartItems validation failed"),
   // ),
   async (c) => {
     const { id } = c.req.valid("param");
     // TODO: Replace with c.req.valid("json") when zValidator is enabled
     const data = await c.req.json();
-    const updatedCartItems = await cartItemsService.updateCartItems(id, data);
+    const updatedCartItem = await cartItemsService.update(id, data);
 
     return c.json({
       message: "Successfully updated cart items",
-      data: updatedCartItems,
+      data: updatedCartItem,
     });
   },
 );
@@ -97,11 +113,11 @@ cartItemsRoute.delete(
   ),
   async (c) => {
     const { id } = c.req.valid("param");
-    const deletedCartItems = await cartItemsService.deleteCartItems(id);
+    const deletedCartItem = await cartItemsService.delete(id);
 
     return c.json({
       message: "Successfully deleted cart items",
-      data: deletedCartItems,
+      data: deletedCartItem,
     });
   },
 );
