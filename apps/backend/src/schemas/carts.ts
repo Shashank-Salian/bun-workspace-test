@@ -5,6 +5,8 @@ import {
   pgTable,
   unique,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm/relations";
+import { cartItems } from "./cart-items";
 import { users } from "./users";
 
 export const carts = pgTable(
@@ -34,3 +36,11 @@ export const carts = pgTable(
     unique("carts_user_id_key").on(table.userId),
   ],
 );
+
+export const cartsRelations = relations(carts, ({ one, many }) => ({
+  user: one(users, {
+    fields: [carts.userId],
+    references: [users.id],
+  }),
+  cartItems: many(cartItems),
+}));

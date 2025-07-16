@@ -1,4 +1,5 @@
 import { foreignKey, integer, pgTable, unique } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm/relations";
 import { carts } from "./carts";
 import { products } from "./products";
 
@@ -39,3 +40,14 @@ export const cartItems = pgTable(
     unique("cart_items_product_id_key").on(table.productId),
   ],
 );
+
+export const cartItemsRelations = relations(cartItems, ({ one }) => ({
+  cart: one(carts, {
+    fields: [cartItems.cartId],
+    references: [carts.id],
+  }),
+  product: one(products, {
+    fields: [cartItems.productId],
+    references: [products.id],
+  }),
+}));

@@ -1,4 +1,5 @@
 import { foreignKey, integer, pgTable } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm/relations";
 import { orders } from "./orders";
 import { products } from "./products";
 
@@ -31,3 +32,14 @@ export const orderItems = pgTable(
     }),
   ],
 );
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.orderId],
+    references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [orderItems.productId],
+    references: [products.id],
+  }),
+}));

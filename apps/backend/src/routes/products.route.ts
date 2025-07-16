@@ -1,8 +1,8 @@
 import { zValidator } from "@hono/zod-validator";
 import {
   createProductSchema,
-  updateProductSchema,
   idParamSchema,
+  updateProductSchema,
 } from "@zod-schemas";
 import { Hono } from "hono";
 import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";

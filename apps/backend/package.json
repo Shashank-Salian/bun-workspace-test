@@ -32,12 +32,15 @@
     "@hono/swagger-ui": "^0.5.2",
     "@hono/zod-openapi": "^0.19.9",
     "@hono/zod-validator": "^0.7.0",
+    "@zod-schemas": "workspace:*",
     "dotenv": "^17.1.0",
     "drizzle-orm": "^0.44.2",
     "hono": "^4.8.4",
     "hono-openapi": "^0.4.8",
+    "hono-pino": "^0.9.1",
     "pg": "^8.16.3",
-    "zod": "^3.25.75",
-    "@zod-schemas": "workspace:*"
+    "pino": "^9.7.0",
+    "pino-pretty": "^13.0.0",
+    "zod": "^3.25.75"
   }
 }

@@ -5,7 +5,10 @@ import {
   text,
   varchar,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm/relations";
+import { cartItems } from "./cart-items";
 import { categories } from "./categories";
+import { orderItems } from "./order-items";
 
 export const products = pgTable(
   "products",
@@ -24,3 +27,9 @@ export const products = pgTable(
     }).onDelete("cascade"),
   ],
 );
+
+export const productsRelations = relations(products, ({ many, one }) => ({
+  cartItems: many(cartItems),
+  orderItems: many(orderItems),
+  category: one(categories),
+}));

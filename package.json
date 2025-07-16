@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.1.1",
+    "@types/aws-lambda": "^8.10.150",
     "@types/bun": "latest"
   },
   "peerDependencies": {

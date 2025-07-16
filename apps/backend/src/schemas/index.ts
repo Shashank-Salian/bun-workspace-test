@@ -7,5 +7,4 @@ export { orderItems } from "./order-items";
 export { orders } from "./orders";
 export { products } from "./products";
 // Export all relations
-export * from "./relations";
 export { users } from "./users";

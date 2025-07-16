@@ -5,16 +5,10 @@ import { handle } from "hono/aws-lambda";
 import app from "./app";
 // import "./routes/docs/users-openapi";
 
+// awslambda.streamifyResponse((e, resStream) => {
+//   resStream.write("Hello World");
+//   resStream.end();
+// });
+
 // For AWS Lambda
 export const handler = handle(app);
-
-// For local development
-// if (process.env.NODE_ENV !== "production") {
-//   const port = 3000;
-//   console.log(`Server is running on port ${port}`);
-
-//   serve({
-//     fetch: app.fetch,
-//     port,
-//   });
-// }

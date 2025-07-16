@@ -5,6 +5,8 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm/relations";
+import { orderItems } from "./order-items";
 import { users } from "./users";
 
 export const orders = pgTable(
@@ -36,3 +38,11 @@ export const orders = pgTable(
     }),
   ],
 );
+
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  user: one(users, {
+    fields: [orders.userId],
+    references: [users.id],
+  }),
+  orderItems: many(orderItems),
+}));
