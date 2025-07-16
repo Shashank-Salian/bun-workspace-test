@@ -2,7 +2,6 @@ import {
   type AllowedSortFields,
   createQuerySchema,
   type FieldOperatorMap,
-  getAllowedOperatorsForField,
 } from "./query-validation.helpers";
 
 // Define allowed fields for cart items with their allowed operators
@@ -35,13 +34,6 @@ export const cartItemsQuerySchema = createQuerySchema(
   ALLOWED_CART_ITEM_FILTER_FIELDS,
   ALLOWED_CART_ITEM_SORT_FIELDS,
 );
-
-// Helper function to get allowed operators for a field
-export function getAllowedOperatorsForCartItemField(
-  field: AllowedCartItemFilterField,
-) {
-  return getAllowedOperatorsForField(field, ALLOWED_CART_ITEM_FILTER_FIELDS);
-}
 
 // Export types and constants for reference
 export { ALLOWED_CART_ITEM_FILTER_FIELDS, ALLOWED_CART_ITEM_SORT_FIELDS };
