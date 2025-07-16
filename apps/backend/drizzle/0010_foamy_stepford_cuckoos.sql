@@ -1,0 +1,26 @@
+ALTER TABLE "cart_items" ALTER COLUMN "createdAt" SET DATA TYPE timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "cart_items" ALTER COLUMN "createdAt" SET DEFAULT now();--> statement-breakpoint
+ALTER TABLE "cart_items" ALTER COLUMN "updatedAt" SET DATA TYPE timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "cart_items" ALTER COLUMN "updatedAt" SET DEFAULT now();--> statement-breakpoint
+ALTER TABLE "carts" ALTER COLUMN "createdAt" SET DATA TYPE timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "carts" ALTER COLUMN "createdAt" SET DEFAULT now();--> statement-breakpoint
+ALTER TABLE "carts" ALTER COLUMN "updatedAt" SET DATA TYPE timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "carts" ALTER COLUMN "updatedAt" SET DEFAULT now();--> statement-breakpoint
+ALTER TABLE "categories" ALTER COLUMN "createdAt" SET DATA TYPE timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "categories" ALTER COLUMN "createdAt" SET DEFAULT now();--> statement-breakpoint
+ALTER TABLE "categories" ALTER COLUMN "updatedAt" SET DATA TYPE timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "categories" ALTER COLUMN "updatedAt" SET DEFAULT now();--> statement-breakpoint
+ALTER TABLE "order_items" ALTER COLUMN "createdAt" SET DATA TYPE timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "order_items" ALTER COLUMN "createdAt" SET DEFAULT now();--> statement-breakpoint
+ALTER TABLE "order_items" ALTER COLUMN "updatedAt" SET DATA TYPE timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "order_items" ALTER COLUMN "updatedAt" SET DEFAULT now();--> statement-breakpoint
+ALTER TABLE "orders" ALTER COLUMN "updatedAt" SET DATA TYPE timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "orders" ALTER COLUMN "updatedAt" SET DEFAULT now();--> statement-breakpoint
+ALTER TABLE "products" ALTER COLUMN "createdAt" SET DATA TYPE timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "products" ALTER COLUMN "createdAt" SET DEFAULT now();--> statement-breakpoint
+ALTER TABLE "products" ALTER COLUMN "updatedAt" SET DATA TYPE timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "products" ALTER COLUMN "updatedAt" SET DEFAULT now();--> statement-breakpoint
+ALTER TABLE "users" ALTER COLUMN "createdAt" SET DATA TYPE timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "users" ALTER COLUMN "createdAt" SET DEFAULT now();--> statement-breakpoint
+ALTER TABLE "users" ALTER COLUMN "updatedAt" SET DATA TYPE timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "users" ALTER COLUMN "updatedAt" SET DEFAULT now();

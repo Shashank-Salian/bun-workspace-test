@@ -8,18 +8,12 @@ import {
 import { relations } from "drizzle-orm/relations";
 import { orderItems } from "./order-items";
 import { users } from "./users";
+import { baseSchema } from "./base-schema";
 
 export const orders = pgTable(
   "orders",
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity({
-      name: "orders_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 2147483647,
-      cache: 1,
-    }),
+    ...baseSchema,
     userId: integer("user_id")
       .notNull()
       .references(() => users.id, {

@@ -2,6 +2,8 @@ import type { SQL } from "drizzle-orm";
 
 export interface BaseModel {
   id: number;
+  // createdAt: string;
+  // updatedAt: string;
 }
 
 export abstract class BaseRepository<S extends BaseModel> {

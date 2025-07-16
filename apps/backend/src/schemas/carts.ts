@@ -8,18 +8,12 @@ import {
 import { relations } from "drizzle-orm/relations";
 import { cartItems } from "./cart-items";
 import { users } from "./users";
+import { baseSchema } from "./base-schema";
 
 export const carts = pgTable(
   "carts",
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity({
-      name: "carts_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 2147483647,
-      cache: 1,
-    }),
+    ...baseSchema,
     codAvailable: boolean("cod_available").default(false).notNull(),
     userId: integer("user_id")
       .notNull()

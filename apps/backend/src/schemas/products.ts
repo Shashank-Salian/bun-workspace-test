@@ -9,11 +9,12 @@ import { relations } from "drizzle-orm/relations";
 import { cartItems } from "./cart-items";
 import { categories } from "./categories";
 import { orderItems } from "./order-items";
+import { baseSchema } from "./base-schema";
 
 export const products = pgTable(
   "products",
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    ...baseSchema,
     name: varchar({ length: 100 }).notNull(),
     price: integer().notNull(),
     description: text(),

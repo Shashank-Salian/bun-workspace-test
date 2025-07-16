@@ -1,4 +1,4 @@
-import { eq, type SQL, sql } from "drizzle-orm";
+import { asc, eq, type SQL, sql } from "drizzle-orm";
 import { BaseRepository } from "../core/base.repository";
 import db from "../db";
 import { users } from "../schemas";
@@ -15,7 +15,8 @@ export class UsersRepository extends BaseRepository<typeof users.$inferSelect> {
       .from(users)
       .limit(limit)
       .offset(offset)
-      .where(where);
+      .where(where)
+      .orderBy(asc(users.id));
   }
 
   /**

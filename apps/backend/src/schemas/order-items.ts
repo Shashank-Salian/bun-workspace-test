@@ -2,11 +2,12 @@ import { foreignKey, integer, pgTable } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
 import { orders } from "./orders";
 import { products } from "./products";
+import { baseSchema } from "./base-schema";
 
 export const orderItems = pgTable(
   "order_items",
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    ...baseSchema,
     orderId: integer("order_id")
       .notNull()
       .references(() => orders.id, {

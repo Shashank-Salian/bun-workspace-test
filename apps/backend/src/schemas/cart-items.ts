@@ -2,18 +2,12 @@ import { foreignKey, integer, pgTable, unique } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
 import { carts } from "./carts";
 import { products } from "./products";
+import { baseSchema } from "./base-schema";
 
 export const cartItems = pgTable(
   "cart_items",
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity({
-      name: "cart_items_id_seq",
-      startWith: 1,
-      increment: 1,
-      minValue: 1,
-      maxValue: 2147483647,
-      cache: 1,
-    }),
+    ...baseSchema,
     cartId: integer("cart_id")
       .notNull()
       .references(() => carts.id, {

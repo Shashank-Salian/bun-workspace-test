@@ -50,6 +50,34 @@
       "when": 1752153147057,
       "tag": "0006_happy_luke_cage",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1752646292142,
+      "tag": "0007_colorful_starbolt",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1752646354044,
+      "tag": "0008_remarkable_blackheart",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1752646371367,
+      "tag": "0009_furry_mentallo",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1752646859343,
+      "tag": "0010_foamy_stepford_cuckoos",
+      "breakpoints": true
     }
   ]
 }
