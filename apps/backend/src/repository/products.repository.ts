@@ -1,5 +1,7 @@
-import { eq, type SQL, sql } from "drizzle-orm";
-import { BaseRepository } from "../core/base.repository";
+import { and, eq, sql } from "drizzle-orm";
+import { BaseRepository, type QueryOptions } from "../core/base.repository";
+import { buildFilterConditions } from "../core/filtering";
+import { buildSortConditions, getDefaultSort } from "../core/sorting";
 import db from "../db";
 import { products } from "../schemas";
 import { InternalServerError } from "../utils/app-errors";
@@ -8,29 +10,53 @@ export class ProductsRepository extends BaseRepository<
   typeof products.$inferSelect
 > {
   /**
-   * Get all products
+   * Get all products with filtering and sorting
    * @returns All products
    */
-  async getAll(limit = 10, offset = 0, where?: SQL<unknown>) {
+  async getAll(limit = 10, offset = 0, options?: QueryOptions) {
+    const { filters = [], sorts = getDefaultSort(), where } = options || {};
+
+    const filterConditions = buildFilterConditions(products, filters);
+    const sortConditions = buildSortConditions(products, sorts);
+
+    const combinedWhere =
+      filterConditions && where
+        ? and(filterConditions, where)
+        : filterConditions || where;
+
     return await db
       .select()
       .from(products)
       .limit(limit)
       .offset(offset)
-      .where(where);
+      .where(combinedWhere)
+      .orderBy(...sortConditions);
   }
 
   /**
-   * Get count of all products
-   * @param where - Optional where condition
+   * Get count of all products with filtering
+   * @param options - Query options including filters and where conditions
    * @returns Count of products
    */
-  async count(where?: SQL<unknown>) {
+  async count(options?: QueryOptions) {
+    const { filters = [], where } = options || {};
+
+    const filterConditions = buildFilterConditions(products, filters);
+
+    const combinedWhere =
+      filterConditions && where
+        ? and(filterConditions, where)
+        : filterConditions || where;
+
     const result = await db
-      .select({ count: sql<number>`count(*)` })
+      .select({ count: sql<string>`count(*)` })
       .from(products)
-      .where(where);
-    return result[0]?.count ?? 0;
+      .where(combinedWhere);
+    const count = Number.parseInt(result[0]?.count);
+    if (Number.isNaN(count)) {
+      throw new InternalServerError("Failed to count products");
+    }
+    return count;
   }
 
   /**

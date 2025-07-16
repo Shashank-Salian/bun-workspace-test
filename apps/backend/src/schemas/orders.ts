@@ -6,9 +6,9 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
+import { baseSchema } from "./base-schema";
 import { orderItems } from "./order-items";
 import { users } from "./users";
-import { baseSchema } from "./base-schema";
 
 export const orders = pgTable(
   "orders",

@@ -1,8 +1,8 @@
 import { foreignKey, integer, pgTable, unique } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
+import { baseSchema } from "./base-schema";
 import { carts } from "./carts";
 import { products } from "./products";
-import { baseSchema } from "./base-schema";
 
 export const cartItems = pgTable(
   "cart_items",

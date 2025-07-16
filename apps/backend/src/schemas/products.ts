@@ -6,10 +6,10 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
+import { baseSchema } from "./base-schema";
 import { cartItems } from "./cart-items";
 import { categories } from "./categories";
 import { orderItems } from "./order-items";
-import { baseSchema } from "./base-schema";
 
 export const products = pgTable(
   "products",

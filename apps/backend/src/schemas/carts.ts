@@ -6,9 +6,9 @@ import {
   unique,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
+import { baseSchema } from "./base-schema";
 import { cartItems } from "./cart-items";
 import { users } from "./users";
-import { baseSchema } from "./base-schema";
 
 export const carts = pgTable(
   "carts",

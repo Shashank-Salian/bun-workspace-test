@@ -1,8 +1,8 @@
 import { pgTable, unique, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
+import { baseSchema } from "./base-schema";
 import { carts } from "./carts";
 import { orders } from "./orders";
-import { baseSchema } from "./base-schema";
 
 export const users = pgTable(
   "users",

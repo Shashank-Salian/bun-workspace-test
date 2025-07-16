@@ -5,27 +5,29 @@ import {
   updateCategorySchema,
 } from "@zod-schemas";
 import { Hono } from "hono";
-import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
+import { PaginatedResponse } from "../core/pagination";
+import { categoriesQuerySchema } from "../schemas/validation/categories-query";
 import { CategoriesService } from "../service/categories.service";
 import { createValidationHook } from "../utils/validation";
 
 const categoriesRoute = new Hono();
 const categoriesService = new CategoriesService();
 
-// GET /categories - Get all categories
+// GET /categories - Get all categories with filtering and sorting
 categoriesRoute.get(
   "/",
   zValidator(
     "query",
-    paginationParamsSchema,
-    createValidationHook("Invalid pagination parameters"),
+    categoriesQuerySchema,
+    createValidationHook("Invalid query parameters"),
   ),
   async (c) => {
-    const { page, pageSize } = c.req.valid("query");
-    const allCategories = await categoriesService.getAllPaginated({
-      page,
-      pageSize,
-    });
+    const { page, pageSize, filters, sorts } = c.req.valid("query");
+
+    const allCategories = await categoriesService.getAllPaginated(
+      { page, pageSize },
+      { filters, sorts },
+    );
 
     return c.json(
       new PaginatedResponse(

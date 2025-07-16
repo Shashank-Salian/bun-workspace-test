@@ -1,34 +1,55 @@
-import { asc, eq, type SQL, sql } from "drizzle-orm";
-import { BaseRepository } from "../core/base.repository";
+import { and, eq, sql } from "drizzle-orm";
+import { BaseRepository, type QueryOptions } from "../core/base.repository";
+import { buildFilterConditions } from "../core/filtering";
+import { buildSortConditions, getDefaultSort } from "../core/sorting";
 import db from "../db";
 import { users } from "../schemas";
 import { InternalServerError } from "../utils/app-errors";
 
 export class UsersRepository extends BaseRepository<typeof users.$inferSelect> {
   /**
-   * Get all users
+   * Get all users with filtering and sorting
    * @returns All users
    */
-  async getAll(limit = 10, offset = 0, where?: SQL<unknown>) {
+  async getAll(limit = 10, offset = 0, options?: QueryOptions) {
+    const { filters = [], sorts = getDefaultSort(), where } = options || {};
+
+    const filterConditions = buildFilterConditions(users, filters);
+    const sortConditions = buildSortConditions(users, sorts);
+
+    const combinedWhere =
+      filterConditions && where
+        ? and(filterConditions, where)
+        : filterConditions || where;
+
     return await db
       .select()
       .from(users)
       .limit(limit)
       .offset(offset)
-      .where(where)
-      .orderBy(asc(users.id));
+      .where(combinedWhere)
+      .orderBy(...sortConditions);
   }
 
   /**
-   * Get count of all users
-   * @param where - Optional where condition
+   * Get count of all users with filtering
+   * @param options - Query options including filters and where conditions
    * @returns Count of users
    */
-  async count(where?: SQL<unknown>) {
+  async count(options?: QueryOptions) {
+    const { filters = [], where } = options || {};
+
+    const filterConditions = buildFilterConditions(users, filters);
+
+    const combinedWhere =
+      filterConditions && where
+        ? and(filterConditions, where)
+        : filterConditions || where;
+
     const result = await db
       .select({ count: sql<number>`count(*)` })
       .from(users)
-      .where(where);
+      .where(combinedWhere);
     return result[0]?.count ?? 0;
   }
 

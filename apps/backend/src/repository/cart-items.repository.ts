@@ -1,5 +1,7 @@
-import { eq, type SQL, sql } from "drizzle-orm";
-import { BaseRepository } from "../core/base.repository";
+import { and, eq, sql } from "drizzle-orm";
+import { BaseRepository, type QueryOptions } from "../core/base.repository";
+import { buildFilterConditions } from "../core/filtering";
+import { buildSortConditions, getDefaultSort } from "../core/sorting";
 import db from "../db";
 import { cartItems } from "../schemas";
 import { InternalServerError } from "../utils/app-errors";
@@ -8,28 +10,48 @@ export class CartItemsRepository extends BaseRepository<
   typeof cartItems.$inferSelect
 > {
   /**
-   * Get all cart items
+   * Get all cart items with filtering and sorting
    * @returns All cart items
    */
-  async getAll(limit = 10, offset = 0, where?: SQL<unknown>) {
+  async getAll(limit = 10, offset = 0, options?: QueryOptions) {
+    const { filters = [], sorts = getDefaultSort(), where } = options || {};
+
+    const filterConditions = buildFilterConditions(cartItems, filters);
+    const sortConditions = buildSortConditions(cartItems, sorts);
+
+    const combinedWhere =
+      filterConditions && where
+        ? and(filterConditions, where)
+        : filterConditions || where;
+
     return await db
       .select()
       .from(cartItems)
       .limit(limit)
       .offset(offset)
-      .where(where);
+      .where(combinedWhere)
+      .orderBy(...sortConditions);
   }
 
   /**
-   * Get count of all cart items
-   * @param where - Optional where condition
+   * Get count of all cart items with filtering
+   * @param options - Query options including filters and where conditions
    * @returns Count of cart items
    */
-  async count(where?: SQL<unknown>) {
+  async count(options?: QueryOptions) {
+    const { filters = [], where } = options || {};
+
+    const filterConditions = buildFilterConditions(cartItems, filters);
+
+    const combinedWhere =
+      filterConditions && where
+        ? and(filterConditions, where)
+        : filterConditions || where;
+
     const result = await db
       .select({ count: sql<number>`count(*)` })
       .from(cartItems)
-      .where(where);
+      .where(combinedWhere);
     return result[0]?.count ?? 0;
   }
 

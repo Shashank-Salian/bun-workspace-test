@@ -5,27 +5,32 @@ import {
   updateProductSchema,
 } from "@zod-schemas";
 import { Hono } from "hono";
-import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
+import { PaginatedResponse } from "../core/pagination";
+import { customLogger } from "../middlewares/pino-logger";
+import { productsQuerySchema } from "../schemas/validation/products-query";
 import { ProductsService } from "../service/products.service";
 import { createValidationHook } from "../utils/validation";
 
-const productsRoute = new Hono();
+const productsRoute = new Hono().use(customLogger());
 const productsService = new ProductsService();
 
-// GET /products - Get all products
+// GET /products - Get all products with filtering and sorting
 productsRoute.get(
   "/",
   zValidator(
     "query",
-    paginationParamsSchema,
-    createValidationHook("Invalid pagination parameters"),
+    productsQuerySchema,
+    createValidationHook("Invalid query parameters"),
   ),
   async (c) => {
-    const { page, pageSize } = c.req.valid("query");
-    const allProducts = await productsService.getAllPaginated({
-      page,
-      pageSize,
-    });
+    const { page, pageSize, filters, sorts } = c.req.valid("query");
+    console.log(process.env.LOG_LEVEL);
+    c.var.logger.debug({ page, pageSize, filters, sorts });
+
+    const allProducts = await productsService.getAllPaginated(
+      { page, pageSize },
+      { filters, sorts },
+    );
 
     return c.json(
       new PaginatedResponse(

@@ -1,7 +1,7 @@
 import { pgTable, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
-import { products } from "./products";
 import { baseSchema } from "./base-schema";
+import { products } from "./products";
 
 export const categories = pgTable("categories", {
   ...baseSchema,

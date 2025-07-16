@@ -1,27 +1,29 @@
 import { zValidator } from "@hono/zod-validator";
 import { idParamSchema } from "@zod-schemas";
 import { Hono } from "hono";
-import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
+import { PaginatedResponse } from "../core/pagination";
+import { cartItemsQuerySchema } from "../schemas/validation/cart-items-query";
 import { CartItemsService } from "../service/cart-items.service";
 import { createValidationHook } from "../utils/validation";
 
 const cartItemsRoute = new Hono();
 const cartItemsService = new CartItemsService();
 
-// GET /cartItems - Get all cartItems
+// GET /cartItems - Get all cartItems with filtering and sorting
 cartItemsRoute.get(
   "/",
   zValidator(
     "query",
-    paginationParamsSchema,
-    createValidationHook("Invalid pagination parameters"),
+    cartItemsQuerySchema,
+    createValidationHook("Invalid query parameters"),
   ),
   async (c) => {
-    const { page, pageSize } = c.req.valid("query");
-    const allCartItems = await cartItemsService.getAllPaginated({
-      page,
-      pageSize,
-    });
+    const { page, pageSize, filters, sorts } = c.req.valid("query");
+
+    const allCartItems = await cartItemsService.getAllPaginated(
+      { page, pageSize },
+      { filters, sorts },
+    );
 
     return c.json(
       new PaginatedResponse(

@@ -1,10 +1,22 @@
 import type { SQL } from "drizzle-orm";
-import type { BaseModel, BaseRepository } from "./base.repository";
+import type {
+  BaseModel,
+  BaseRepository,
+  QueryOptions,
+} from "./base.repository";
+import type { FilterConditions } from "./filtering";
 import {
   type PaginatedData,
   type PaginationParams,
   paginate,
 } from "./pagination";
+import type { SortConditions } from "./sorting";
+
+export interface ServiceQueryOptions {
+  filters?: FilterConditions;
+  sorts?: SortConditions;
+  where?: SQL<unknown>;
+}
 
 export class BaseService<
   TRow extends BaseModel,
@@ -16,15 +28,20 @@ export class BaseService<
     this.repository = repository;
   }
 
-  async getAll() {
-    return this.repository.getAll();
+  async getAll(options?: ServiceQueryOptions) {
+    const queryOptions: QueryOptions = {
+      filters: options?.filters,
+      sorts: options?.sorts,
+      where: options?.where,
+    };
+    return this.repository.getAll(undefined, undefined, queryOptions);
   }
 
   async getById(id: number) {
     return this.repository.getById(id);
   }
 
-  async create(data: Omit<TRow, "id">) {
+  async create(data: Omit<TRow, "id" | "createdAt" | "updatedAt">) {
     return this.repository.create(data);
   }
 
@@ -37,12 +54,17 @@ export class BaseService<
   }
 
   /**
-   * Get paginated results
+   * Get paginated results with filtering and sorting
    */
   async getAllPaginated(
     params: PaginationParams,
-    whereCondition?: SQL<unknown>,
+    options?: ServiceQueryOptions,
   ): Promise<PaginatedData<TRow>> {
-    return paginate(this.repository, params, whereCondition);
+    const queryOptions: QueryOptions = {
+      filters: options?.filters,
+      sorts: options?.sorts,
+      where: options?.where,
+    };
+    return paginate(this.repository, params, queryOptions);
   }
 }

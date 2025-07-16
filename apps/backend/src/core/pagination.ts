@@ -1,30 +1,43 @@
-import type { SQL } from "drizzle-orm";
 import { z } from "zod/v4";
-import type { BaseModel, BaseRepository } from "./base.repository";
+import type {
+  BaseModel,
+  BaseRepository,
+  QueryOptions,
+} from "./base.repository";
 import { type ErrorResponse, StandardResponse } from "./response.schema";
 
+export const DEFAULT_PAGE = 1;
+export const DEFAULT_LIMIT = 10;
+export const MAX_LIMIT = 100;
+
 export const paginationParamsSchema = z.object({
-  page: z.coerce.number().int("Invalid page number").default(1),
-  pageSize: z.coerce.number().int("Invalid page size").default(10),
+  page: z.coerce
+    .number({ error: "Page must be a number" })
+    .int()
+    .min(1, { error: "Min allowed page is 1" })
+    .default(1),
+  pageSize: z.coerce
+    .number({ error: "Page size must be a number" })
+    .int()
+    .min(1, { error: "Min allowed page size is 1" })
+    .max(50, { error: "Max allowed page size is 50" })
+    .default(10),
 });
 
 export type PaginationParams = z.infer<typeof paginationParamsSchema>;
 
 export interface PaginationMeta {
-  currentPage: number;
+  page: number;
   totalPages: number;
   totalItems: number;
-  itemsPerPage: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  //   startIndex: number;
-  //   endIndex: number;
+  pageSize: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
 }
 
-export interface PaginatedData<T> {
+export type PaginatedData<T> = {
   items: T[];
-  meta: PaginationMeta;
-}
+} & PaginationMeta;
 
 export class PaginatedResponse<T> extends StandardResponse<PaginatedData<T>> {
   constructor(
@@ -37,10 +50,6 @@ export class PaginatedResponse<T> extends StandardResponse<PaginatedData<T>> {
     super(success, message, statusCode, data, errors);
   }
 }
-
-export const DEFAULT_PAGE = 1;
-export const DEFAULT_LIMIT = 10;
-export const MAX_LIMIT = 100;
 
 /**
  * Normalize pagination parameters
@@ -65,24 +74,20 @@ export function normalizePaginationParams(params: PaginationParams): {
  */
 export function calculatePaginationMeta(
   totalItems: number,
-  currentPage: number,
-  itemsPerPage: number,
+  page: number,
+  pageSize: number,
 ): PaginationMeta {
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const hasNextPage = currentPage < totalPages;
-  const hasPreviousPage = currentPage > 1;
-  //   const startIndex = (currentPage - 1) * itemsPerPage + 1;
-  //   const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
+  const totalPages = Math.ceil(totalItems / pageSize);
+  const hasNext = page < totalPages;
+  const hasPrevious = page > 1;
 
   return {
-    currentPage,
+    page,
     totalPages,
     totalItems,
-    itemsPerPage,
-    hasNextPage,
-    hasPreviousPage,
-    // startIndex: totalItems > 0 ? startIndex : 0,
-    // endIndex: totalItems > 0 ? endIndex : 0,
+    pageSize,
+    hasNext,
+    hasPrevious,
   };
 }
 
@@ -92,20 +97,20 @@ export function calculatePaginationMeta(
 export async function paginate<T extends BaseModel>(
   repository: BaseRepository<T>,
   params: PaginationParams,
-  whereCondition?: SQL<unknown>,
+  options?: QueryOptions,
 ): Promise<PaginatedData<T>> {
   const { page, pageSize, offset } = normalizePaginationParams(params);
 
   // Get total count and items in parallel for better performance
   const [totalItems, items] = await Promise.all([
-    repository.count(whereCondition),
-    repository.getAll(pageSize, offset, whereCondition),
+    repository.count(options),
+    repository.getAll(pageSize, offset, options),
   ]);
 
   const meta = calculatePaginationMeta(totalItems, page, pageSize);
 
   return {
     items,
-    meta,
+    ...meta,
   };
 }

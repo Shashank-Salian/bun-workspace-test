@@ -1,16 +1,24 @@
 import type { SQL } from "drizzle-orm";
+import type { FilterConditions } from "./filtering";
+import type { SortConditions } from "./sorting";
 
 export interface BaseModel {
   id: number;
-  // createdAt: string;
-  // updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface QueryOptions {
+  filters?: FilterConditions;
+  sorts?: SortConditions;
+  where?: SQL<unknown>;
 }
 
 export abstract class BaseRepository<S extends BaseModel> {
   abstract getAll(
     limit?: number,
     offset?: number,
-    where?: SQL<unknown>,
+    options?: QueryOptions,
   ): Promise<S[]>;
   abstract getById(id: number): Promise<S | null>;
   abstract getById<TColumns extends { [key in keyof S]?: true }>(
@@ -22,8 +30,8 @@ export abstract class BaseRepository<S extends BaseModel> {
       }
     | null
   >;
-  abstract create(data: Omit<S, "id">): Promise<S>;
+  abstract create(data: Omit<S, "id" | "createdAt" | "updatedAt">): Promise<S>;
   abstract update(id: number, data: Partial<S>): Promise<S>;
   abstract delete(id: number): Promise<void>;
-  abstract count(where?: SQL<unknown>): Promise<number>;
+  abstract count(options?: QueryOptions): Promise<number>;
 }

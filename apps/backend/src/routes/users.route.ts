@@ -5,27 +5,29 @@ import {
   updateUserSchema,
 } from "@zod-schemas";
 import { Hono } from "hono";
-import { PaginatedResponse, paginationParamsSchema } from "../core/pagination";
+import { PaginatedResponse } from "../core/pagination";
+import { usersQuerySchema } from "../schemas/validation/users-query";
 import { UsersService } from "../service/users.service";
 import { createValidationHook } from "../utils/validation";
 
 const usersRoute = new Hono();
 const usersService = new UsersService();
 
-// GET /users - Get all users
+// GET /users - Get all users with filtering and sorting
 usersRoute.get(
   "/",
   zValidator(
     "query",
-    paginationParamsSchema,
-    createValidationHook("Invalid pagination parameters"),
+    usersQuerySchema,
+    createValidationHook("Invalid query parameters"),
   ),
   async (c) => {
-    const { page, pageSize } = c.req.valid("query");
-    const allUsers = await usersService.getAllPaginated({
-      page,
-      pageSize,
-    });
+    const { page, pageSize, filters, sorts } = c.req.valid("query");
+
+    const allUsers = await usersService.getAllPaginated(
+      { page, pageSize },
+      { filters, sorts },
+    );
 
     return c.json(
       new PaginatedResponse(true, "Users fetched successfully", 200, allUsers),
