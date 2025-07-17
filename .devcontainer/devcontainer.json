@@ -9,7 +9,14 @@
 		3000
 	],
 	"workspaceFolder": "/workspace",
-	"postCreateCommand": "bun install",
+	"remoteUser": "vscode",
+	"postCreateCommand": "sudo chown -R vscode:vscode /workspace",
+	"mounts": [
+		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+	],
+	"runArgs": [
+		"--privileged"
+	],
 	"customizations": {
 		"vscode": {
 			"extensions": [
