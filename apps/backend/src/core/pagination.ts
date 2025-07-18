@@ -2,6 +2,7 @@ import { z } from "zod/v4";
 import type {
   BaseModel,
   BaseRepository,
+  BaseTable,
   QueryOptions,
 } from "./base.repository";
 import { type ErrorResponse, StandardResponse } from "./response.schema";
@@ -95,7 +96,7 @@ export function calculatePaginationMeta(
  * Generic paginate method that works with any BaseRepository
  */
 export async function paginate<T extends BaseModel>(
-  repository: BaseRepository<T>,
+  repository: BaseRepository<T, BaseTable>,
   params: PaginationParams,
   options?: QueryOptions,
 ): Promise<PaginatedData<T>> {

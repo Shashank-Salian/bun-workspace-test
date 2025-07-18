@@ -45,3 +45,6 @@ export const cartItemsRelations = relations(cartItems, ({ one }) => ({
     references: [products.id],
   }),
 }));
+
+export type CartItems = typeof cartItems.$inferSelect;
+export type NewCartItems = typeof cartItems.$inferInsert;

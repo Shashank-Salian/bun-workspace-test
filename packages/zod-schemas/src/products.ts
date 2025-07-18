@@ -22,7 +22,7 @@ export const createProductSchema = productsSchema.omit({
   id: true,
 });
 
-export const updateProductSchema = productsSchema.partial({
+export const updateProductSchema = productsSchema.omit({ id: true }).partial({
   categoryId: true,
   description: true,
   price: true,

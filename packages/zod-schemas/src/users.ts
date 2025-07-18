@@ -11,7 +11,7 @@ export const usersSchema = z.object({
 
 export const createUserSchema = usersSchema.omit({ id: true });
 
-export const updateUserSchema = usersSchema.partial({
+export const updateUserSchema = usersSchema.omit({ id: true }).partial({
   email: true,
   name: true,
 });

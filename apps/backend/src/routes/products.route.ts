@@ -24,7 +24,6 @@ productsRoute.get(
   ),
   async (c) => {
     const { page, pageSize, filters, sorts } = c.req.valid("query");
-    console.log(process.env.LOG_LEVEL);
     c.var.logger.debug({ page, pageSize, filters, sorts });
 
     const allProducts = await productsService.getAllPaginated(

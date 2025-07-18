@@ -2,6 +2,7 @@ import type { SQL } from "drizzle-orm";
 import type {
   BaseModel,
   BaseRepository,
+  BaseTable,
   QueryOptions,
 } from "./base.repository";
 import type { FilterConditions } from "./filtering";
@@ -20,7 +21,7 @@ export interface ServiceQueryOptions {
 
 export class BaseService<
   TRow extends BaseModel,
-  Repository extends BaseRepository<TRow>,
+  Repository extends BaseRepository<TRow, BaseTable>,
 > {
   protected readonly repository: Repository;
 
