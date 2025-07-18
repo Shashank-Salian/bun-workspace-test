@@ -81,32 +81,5 @@ export function createQuerySchema<
         filters: validatedFilters,
         sorts: validatedSorts,
       };
-    })
-    .refine(
-      (data) => {
-        // Ensure all filters use valid field-operator combinations
-        return data.filters.every((filter) => {
-          const field = filter.field as keyof TFilterFields;
-          const allowedOperators = allowedFilterFields[field];
-          return (
-            field in allowedFilterFields &&
-            allowedOperators?.includes(filter.operator)
-          );
-        });
-      },
-      {
-        message: `Invalid filter field or operator combination`,
-      },
-    )
-    .refine(
-      (data) => {
-        // Ensure all sorts use valid fields
-        return data.sorts.every((sort) =>
-          allowedSortFields.includes(sort.field as TSortFields[number]),
-        );
-      },
-      {
-        message: `Sort fields must be one of: ${allowedSortFields.join(", ")}`,
-      },
-    );
+    });
 }
