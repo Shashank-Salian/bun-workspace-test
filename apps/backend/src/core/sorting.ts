@@ -19,6 +19,7 @@ export type SortConditions = SortCondition[];
 /**
  * Convert sort conditions to Drizzle SQL order by clauses
  */
+// biome-ignore lint/suspicious/noExplicitAny: Can be any table with any columns
 export function buildSortConditions<T extends Record<string, any>>(
   table: T,
   sorts: SortConditions,

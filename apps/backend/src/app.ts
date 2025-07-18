@@ -11,6 +11,8 @@ import usersRoute from "./routes/users.route";
 import { AppError } from "./utils/app-errors";
 import { getDatabaseError } from "./utils/error-handler";
 
+// import { logger as honoLogger } from "hono/logger";
+
 // import { openAPISpecs } from "@hono/zod-openapi";
 // import { swaggerUI } from "@hono/swagger-ui";
 let id = 0;
@@ -18,6 +20,7 @@ let id = 0;
 const app = new Hono()
   .use(requestId())
   .use(customLogger())
+  // .use(honoLogger(winstonLogger))
   .route("/users", usersRoute)
   .route("/products", productsRoute)
   .route("/categories", categoriesRoute)

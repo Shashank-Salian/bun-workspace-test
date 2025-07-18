@@ -39,6 +39,8 @@ export type FilterConditions = FilterCondition[];
 /**
  * Convert filter conditions to Drizzle SQL conditions
  */
+
+// biome-ignore lint/suspicious/noExplicitAny: Can be any table with any columns
 export function buildFilterConditions<T extends Record<string, any>>(
   table: T,
   filters: FilterConditions,

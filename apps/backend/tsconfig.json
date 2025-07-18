@@ -7,7 +7,8 @@
     "skipLibCheck": true,
     "types": ["node", "aws-lambda"],
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
+    "jsxImportSource": "hono/jsx",
+    "experimentalDecorators": true
   },
   "include": ["src/**/*.ts"]
 }

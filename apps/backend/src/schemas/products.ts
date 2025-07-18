@@ -34,3 +34,6 @@ export const productsRelations = relations(products, ({ many, one }) => ({
   orderItems: many(orderItems),
   category: one(categories),
 }));
+
+export type Product = typeof products.$inferSelect;
+export type NewProduct = typeof products.$inferInsert;

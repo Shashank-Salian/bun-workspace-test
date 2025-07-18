@@ -1,9 +1,13 @@
 import { and, eq, sql } from "drizzle-orm";
+import type { PgQueryResultHKT, PgTransaction } from "drizzle-orm/pg-core";
 import { BaseRepository, type QueryOptions } from "../core/base.repository";
 import { buildFilterConditions } from "../core/filtering";
+import { logger } from "../core/logger";
 import { buildSortConditions, getDefaultSort } from "../core/sorting";
 import db from "../db";
+import { transactional } from "../db/transactional";
 import { products } from "../schemas";
+import type { NewProduct, Product } from "../schemas/products";
 import { InternalServerError } from "../utils/app-errors";
 
 export class ProductsRepository extends BaseRepository<
@@ -12,7 +16,8 @@ export class ProductsRepository extends BaseRepository<
   /**
    * Get all products with filtering and sorting
    * @returns All products
-   */
+  //  */
+
   async getAll(limit = 10, offset = 0, options?: QueryOptions) {
     const { filters = [], sorts = getDefaultSort(), where } = options || {};
 
@@ -64,24 +69,21 @@ export class ProductsRepository extends BaseRepository<
    * @param id - The id of the products to get
    * @returns The products
    */
-  async getById(id: number): Promise<typeof products.$inferSelect | null>;
-  async getById<
-    TColumns extends { [key in keyof typeof products.$inferSelect]?: true },
-  >(
+  async getById(id: number): Promise<Product | null>;
+  async getById<TColumns extends { [key in keyof Product]?: true }>(
     id: number,
     columns: TColumns,
   ): Promise<
     | {
-        [K in keyof TColumns]: K extends keyof typeof products.$inferSelect
-          ? (typeof products.$inferSelect)[K]
-          : never;
+        [K in keyof TColumns]: K extends keyof Product ? Product[K] : never;
       }
     | null
   >;
 
-  async getById<
-    TColumns extends { [key in keyof typeof products.$inferSelect]?: true },
-  >(id: number, columns?: TColumns) {
+  async getById<TColumns extends { [key in keyof Product]?: true }>(
+    id: number,
+    columns?: TColumns,
+  ) {
     if (columns) {
       return await db.query.products.findFirst({
         columns,
@@ -102,9 +104,15 @@ export class ProductsRepository extends BaseRepository<
    * @throws {InternalServerError} - If the products creation fails
    * @throws {DrizzleQueryError} - If the products creation fails
    */
-  async create(data: typeof products.$inferInsert) {
-    const result = (await db.insert(products).values(data).returning()).at(0);
+  @transactional()
+  async create(data: NewProduct, tx?: PgTransaction<PgQueryResultHKT>) {
+    if (!tx) {
+      logger.error("Transaction is required");
+      throw new InternalServerError("Transaction is required");
+    }
+    const result = (await tx.insert(products).values(data).returning()).at(0);
     if (!result) {
+      tx.rollback();
       throw new InternalServerError("Failed to create products");
     }
     return result;
@@ -118,7 +126,7 @@ export class ProductsRepository extends BaseRepository<
    * @throws {DrizzleQueryError} - If the products update fails
    * @returns The updated products
    */
-  async update(id: number, data: Partial<typeof products.$inferSelect>) {
+  async update(id: number, data: Partial<Product>) {
     const result = (
       await db.update(products).set(data).where(eq(products.id, id)).returning()
     ).at(0);

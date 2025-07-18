@@ -1,4 +1,5 @@
 import type { SQL } from "drizzle-orm";
+import type { PgQueryResultHKT, PgTransaction } from "drizzle-orm/pg-core";
 import type { FilterConditions } from "./filtering";
 import type { SortConditions } from "./sorting";
 
@@ -31,6 +32,10 @@ export abstract class BaseRepository<S extends BaseModel> {
     | null
   >;
   abstract create(data: Omit<S, "id" | "createdAt" | "updatedAt">): Promise<S>;
+  abstract create(
+    data: Omit<S, "id" | "createdAt" | "updatedAt">,
+    tx: PgTransaction<PgQueryResultHKT>,
+  ): Promise<S>;
   abstract update(id: number, data: Partial<S>): Promise<S>;
   abstract delete(id: number): Promise<void>;
   abstract count(options?: QueryOptions): Promise<number>;
